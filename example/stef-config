@@ -1,0 +1,10 @@
+#
+# Put variables that you want to use from the test scripts here.
+#
+# You should always export all variables aside from those that are only used by
+# the framework itself (e.g. STEF_TEST_NAME).  If you do not export them, they
+# will not be known in the test scripts.
+#
+
+# This is used by the STEF itself to print a header.
+STEF_TEST_NAME="STEF Example Use Case"

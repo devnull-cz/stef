@@ -1,0 +1,2 @@
+This is an example of a test which returned 0 but its output
+does not match the expected printed output.
