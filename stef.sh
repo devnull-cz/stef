@@ -40,7 +40,7 @@ fi
 # there.
 [[ -f stef-config ]] && . ./stef-config
 
-[[ -n "$STEF_TEST_NAME" ]] && printf "=== [ $STEF_TEST_NAME ] ===\n\n"
+[[ -n "$STEF_TESTSUITE_NAME" ]] && printf "=== [ $STEF_TESTSUITE_NAME ] ===\n\n"
 
 # Test must match a pattern "test-*.sh".  All other scripts are ignored.
 # E.g. test-001.sh, test-002.sh, test-cmd-003, etc.

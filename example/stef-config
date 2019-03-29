@@ -7,4 +7,4 @@
 #
 
 # This is used by the STEF itself to print a header.
-STEF_TEST_NAME="STEF Example Use Case"
+STEF_TESTSUITE_NAME="STEF Example Use Case"

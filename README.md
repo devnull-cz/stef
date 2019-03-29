@@ -50,7 +50,7 @@ the tests, use `:-`.  For example:
 
 ```
 $ cat stef-config
-export STEF_TEST_NAME="NPRG099 ed tests, Part 2"
+export STEF_TESTSUITE_NAME="NPRG099 ed tests, Part 2"
 export LS=/bin/ls
 export INPUTFILE=inputfile
 export TESTBINARY={TESTBINARY:-/data/hg/maied/ed}
@@ -64,7 +64,7 @@ STEF recognizes the following variables:
 
 Variable name | Purpose
 ------------ | -------------
-STEF\_TEST\_NAME | if defined, a simple header is printed when running the tests.Set it in `stef-config` if needed.
+STEF\_TESTSUITE\_NAME | if defined, a simple header is printed when running the tests.  Set it in `stef-config` if needed.
 STEF\_UNTESTED | exit with $STEF\_UNTESTED when the test fails before actually testing the objective.  E.g. one cannot create a file for temporary output.
 STEF\_UNSUPPORTED | exit with $STEF\_UNSUPPORTED when the test is not supported.  E.g. having an x86 test run on SPARC architecture.
 
