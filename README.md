@@ -101,18 +101,18 @@ Sourcing test suite specific configuration: ./test-config.local
 Checking test suite specific executables: MYCMD
 
 --- [ Configuration Start ] ---
-Created temporary directory dir.YoVVd.
+Created temporary directory 'dir.YoVVd'.
 --- [ Configuration End ] ---
 
 ---[ Running tests ] ---
   001	PASS
   002	UNSUPPORTED
 --- 8< BEGIN output ---
-Even for unsupported runs, the output is printed if there is any.
+Even for unsupported unit tests, the output is printed if there is any.
 --- 8< END output ---
   003	UNTESTED
 --- 8< BEGIN output ---
-Even for untested runs, the output is printed if there is any.
+Even for untested unit tests, the output is printed if there is any.
 --- 8< END output ---
   004	FAIL
 --- 8< BEGIN output ---
@@ -134,9 +134,9 @@ It is printed here as the test failed.
 
 --- [ Unconfiguration Start ] ---
 Forcing unconfiguration (STEF_UNCONFIGURE_ALWAYS).
-Removing tmp directory dir.YoVVd.
+Removing tmp directory 'dir.YoVVd'.
 Temp directory 'dir.YoVVd' succesufully removed.
-Removing config.var.
+Removing 'config.var'.
 --- [ Unconfiguration End ] ---
 
 === [ STEF Example Use Case Results ] ===

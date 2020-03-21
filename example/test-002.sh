@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo "Even for unsupported runs, the output is printed if there is any."
+echo "Even for unsupported unit tests, the output is printed if there is any."
 exit $STEF_UNSUPPORTED

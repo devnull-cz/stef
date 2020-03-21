@@ -6,7 +6,7 @@
 # different for each configure run.  That is why we need to source $configvar.
 source $configvar
 
-echo "Removing tmp directory $tmpdir."
+echo "Removing tmp directory '$tmpdir'."
 
 if [[ -z $tmpdir ]]; then
 	echo "Variable 'tmpdir' not set.  Exiting."
@@ -21,4 +21,4 @@ if (($? != 0)); then
 fi
 
 echo "Temp directory '$tmpdir' succesufully removed."
-echo "Removing $configvar."
+echo "Removing '$configvar'."
