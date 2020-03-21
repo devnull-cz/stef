@@ -53,9 +53,9 @@ if [[ -n $STEF_CONFIG_LOCAL && -f $STEF_CONFIG_LOCAL ]]; then
 	source ./$STEF_CONFIG_LOCAL
 fi
 
+echo "Checking test suite specific executables set in variables:" \
+    "$STEF_EXECUTABLE_LOCAL_VARS"
 for var in $STEF_EXECUTABLE_LOCAL_VARS; do
-	echo "Checking test suite specific executables set in variables:" \
-	    "$STEF_EXECUTABLE_LOCAL_VARS"
 	varexec=$(eval echo \$$var)
 	[[ -x $varexec && $varexec == /* ]] && continue
 
