@@ -183,7 +183,9 @@ typeset -i stefret=0
 
 if [[ -n $STEF_UNCONFIGURE ]]; then
 	printf -- "\n--- [ Unconfiguration Start ] ---\n"
-	if [[ $stefret -ne 0 && -z $STEF_UNCONFIGURE_ALWAYS ]]; then
+	if [[ -n $STEF_UNCONFIGURE_NEVER ]]; then
+		echo "Skipping unconfiguration (STEF_UNCONFIGURE_NEVER)."
+	elif [[ $stefret -ne 0 && -z $STEF_UNCONFIGURE_ALWAYS ]]; then
 		echo "Skipping unconfiguration due to some test failures."
 	else
 		((stefret != 0)) &&
