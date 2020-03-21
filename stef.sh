@@ -25,9 +25,9 @@ export STEF_UNTESTED
 function catoutput
 {
 	[[ -s $output ]] || return
-	echo "== 8< BEGIN output =="
+	echo "--- 8< BEGIN output ---"
 	cat $output
-	echo "== 8< END output====="
+	echo "--- 8< END output ---"
 }
 
 # If the first argument is a directory, go in there.
@@ -42,7 +42,8 @@ fi
 # there.
 [[ -f $STEF_CONFIG ]] && source ./$STEF_CONFIG
 
-[[ -n "$STEF_TESTSUITE_NAME" ]] && printf "=== [ $STEF_TESTSUITE_NAME ] ===\n"
+[[ -z $STEF_TESTSUITE_NAME ]] && STEF_TESTSUITE_NAME="STEF Test Run"
+printf "=== [ $STEF_TESTSUITE_NAME ] ===\n"
 
 # If this variable is set, the test suite clone specific settings may put in
 # that file.  For example, stuff that each user will need to set differently,
@@ -73,20 +74,27 @@ for var in $STEF_EXECUTABLE_LOCAL_VARS; do
 	exit 1
 done
 
-if [[ -n $STEF_CONFIGURE ]]; then
-	echo "Configuring the test run..."
-	if [[ ! -x $STEF_CONFIGURE ]]; then
-		echo "Error: $STEF_CONFIGURE not executable."
-		ret=1
-	else
-		$STEF_CONFIGURE
-		ret=$?
+typeset varname
+for varname in STEF_CONFIGURE STEF_UNCONFIGURE; do
+	typeset varvalue=$(eval echo \$$varname)
+
+	[[ -z $varvalue ]] && continue
+
+	if [[ ! -x $varvalue ]]; then
+		echo "Error: $varname set to '$varvalue' but not executable."
+		echo "Exiting."
+		exit 1
 	fi
-	if ((ret != 0)); then
+done
+
+if [[ -n $STEF_CONFIGURE ]]; then
+	printf -- "\n--- [ Configuration Start ] ---\n"
+	$STEF_CONFIGURE
+	if (($? != 0)); then
 		echo "Configuration failed, fix it and rerun.  Exiting."
 		exit 1
 	fi
-	echo "Configuration done."
+	printf -- "--- [ Configuration End ] ---\n"
 fi
 
 # Test must match a pattern "test-*.sh".  All other scripts are ignored.
@@ -107,8 +115,7 @@ else
 	testnames=$( echo "$testfiles" | cut -f2- -d- | cut -f1 -d. )
 fi
 
-echo "Running tests."
-printf -- "------------\n"
+printf -- "\n---[ Running tests ] ---\n"
 
 for i in $testnames; do
 	# Print the test number.
@@ -118,28 +125,28 @@ for i in $testnames; do
 	ret=$?
 
 	# Go through some selected exit codes that has special meaning to STEF.
-	if (( ret == STEF_UNSUPPORTED )); then
+	if ((ret == STEF_UNSUPPORTED)); then
 		echo "UNSUPPORTED"
 		catoutput
 		rm -f $output
 		continue;
-	elif (( ret == STEF_UNTESTED )); then
+	elif ((ret == STEF_UNTESTED)); then
 		echo "UNTESTED"
 		# An untested test is a red flag as we failed even before
 		# testing what we were supposed to.
-		untested=1
+		((++untested))
 		catoutput
 		rm -f $output
 		continue;
 	fi
 
 	# Anything else aside from 0 is a test fail.
-	if (( ret != 0 )); then
+	if ((ret != 0)); then
 		echo "FAIL"
-		fail=1
-		echo "== 8< BEGIN output =="
+		((++fail))
+		echo "--- 8< BEGIN output ---"
 		cat $output
-		echo "== 8< END output====="
+		echo "--- 8< END output ---"
 		rm $output
 		continue
 	fi
@@ -153,12 +160,12 @@ for i in $testnames; do
 	fi
 
 	diff -u test-output-$i.txt $output > $diffout
-	if [[ $? -ne 0 ]]; then
+	if (($? != 0)); then
 		echo "FAIL"
-		fail=1
-		echo "== 8< BEGIN diff output =="
+		((++fail))
+		echo "--- 8< BEGIN diff output ---"
 		cat $diffout
-		echo "== 8< END diff output====="
+		echo "--- 8< END diff output ---"
 	else
 		echo "PASS"
 	fi
@@ -166,38 +173,30 @@ for i in $testnames; do
 	rm -f $output $diffout
 done
 
-printf -- "------------\n"
+printf -- "---[ Tests finished ] ---\n"
 
-if [[ $fail -eq 1 ]]; then
-	echo "WARNING: some tests FAILED !!!"
-	retval=1
-fi
-if [[ $untested -eq 1 ]]; then
-	echo "WARNING: some tests UNTESTED !!!"
-	retval=1
-fi
-if [[ $fail -eq 0 && $untested -eq 0 ]]; then
-	echo "All tests passed."
-	retval=0
-fi
+typeset -i stefret=0
+((fail > 0)) && stefret=1
+((untested > 0)) && stefret=1
 
 if [[ -n $STEF_UNCONFIGURE ]]; then
-	if ((ret != 0)); then
+	printf -- "\n--- [ Unconfiguration Start ] ---\n"
+	if [[ $stefret -ne 0 && -z $STEF_UNCONFIGURE_ALWAYS ]]; then
 		echo "Skipping unconfiguration due to some test failures."
 	else
-		echo "Unconfiguring the test run..."
-		if [[ ! -x $STEF_UNCONFIGURE ]]; then
-			echo "Error: $STEF_UNCONFIGURE not executable."
-			ret=1
-		else
-			$STEF_UNCONFIGURE
-		fi
-		if ((ret != 0)); then
+		((stefret != 0)) &&
+		    echo "Forcing unconfiguration (STEF_UNCONFIGURE_ALWAYS)."
+		$STEF_UNCONFIGURE
+		if (($? != 0)); then
 			echo "WARNING: Unconfiguration failed."
-		else
-			echo "Unconfiguration done."
 		fi
 	fi
+	printf -- "--- [ Unconfiguration End ] ---\n"
 fi
 
-exit $retval
+printf "\n=== [ $STEF_TESTSUITE_NAME Results ] ===\n"
+((fail > 0)) && echo "WARNING: $fail test(s) FAILED !!!"
+((untested > 0)) && echo "WARNING: $untested test(s) UNTESTED !!!"
+((fail == 0 && untested == 0)) && echo "All tests passed."
+
+exit $stefret
