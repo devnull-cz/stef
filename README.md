@@ -98,7 +98,7 @@ like the following:
 ```
 === [ STEF Example Use Case ] ===
 Sourcing test suite specific configuration: ./test-config.local
-Checking test suite specific executables: MYCMD
+Checking test suite specific executables set in variables: MYCMD
 
 --- [ Configuration Start ] ---
 Created temporary directory 'dir.YoVVd'.
