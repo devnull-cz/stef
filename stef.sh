@@ -53,7 +53,7 @@ if [[ -n $STEF_CONFIG_LOCAL && -f $STEF_CONFIG_LOCAL ]]; then
 	source ./$STEF_CONFIG_LOCAL
 fi
 
-echo "Checking test suite specific executables set in variables:" \
+echo "Checking existence of executables provided by the following variables:" \
     "$STEF_EXECUTABLE_LOCAL_VARS"
 for var in $STEF_EXECUTABLE_LOCAL_VARS; do
 	varexec=$(eval echo \$$var)
@@ -159,6 +159,8 @@ for i in $testnames; do
 		continue
 	fi
 
+	# As both stdout and stderr output goes to the same file, the unit test
+	# output file must contains both expected stdout and stderr.
 	diff -u test-output-$i.txt $output > $diffout
 	if (($? != 0)); then
 		echo "FAIL"
