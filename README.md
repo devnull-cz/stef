@@ -71,7 +71,7 @@ STEF\_CONFIGURE | if defined, this executable is run before executing the tests.
 STEF\_UNCONFIGURE | if defined, this executable is run after executing the tests.  By default, the unconfiguration phase is skipped if any of the test finishes as *FAILED* or *UNTESTED*.  The reason is make the failed test run easier to debug.  See also STEF\_UNCONFIGURE\_ALWAYS.
 STEF\_UNCONFIGURE\_ALWAYS | if set to any non-empty value, the unconfiguration phase (if set via STEF\_UNCONFIGURE) is always run even if not all tests finish as *PASSED*.
 STEF\_EXECUTABLE\_LOCAL\_VARS | if defined, STEF will make sure all space separated variable names point to an existing executables.  Use this variable if you need the user define those before running the test suite.  All such variables **must** be set as absolute paths.
-STEF\_CONFIG\_LOCAL | a name of a file which, **if it exists**, is sourced after *stef-config* is sourced.  Use this variable, for example, for setting up the test binary variable which is user specific, as $STEF\_CONFIG\_LOCAL file should never be commited.  Variables in this file should be always defined with the `export` builtin.
+STEF\_CONFIG\_LOCAL | a name of a file which, **if existent**, is sourced after `stef-config` is sourced.  Use this variable, for example, for setting up the test binary variable which is user specific, as $STEF\_CONFIG\_LOCAL file should never be commited.  Variables in this file should be always defined with the `export` builtin.
 
 ## Test Output Files
 
@@ -96,38 +96,52 @@ See the `./examples` subdirectory which contains a set of tests.  The output is
 like the following:
 
 ```
-$ stef
 === [ STEF Example Use Case ] ===
+Sourcing test suite specific configuration: ./test-config.local
+Checking test suite specific executables: MYCMD
 
-001	PASS
-002	UNSUPPORTED
-== 8< BEGIN output ==
+--- [ Configuration Start ] ---
+Created temporary directory dir.YoVVd.
+--- [ Configuration End ] ---
+
+---[ Running tests ] ---
+  001	PASS
+  002	UNSUPPORTED
+--- 8< BEGIN output ---
 Even for unsupported runs, the output is printed if there is any.
-== 8< END output=====
-003	UNTESTED
-== 8< BEGIN output ==
+--- 8< END output ---
+  003	UNTESTED
+--- 8< BEGIN output ---
 Even for untested runs, the output is printed if there is any.
-== 8< END output=====
-004	FAIL
-== 8< BEGIN output ==
+--- 8< END output ---
+  004	FAIL
+--- 8< BEGIN output ---
 This is some output the test script printed.
 It is printed here as the test failed.
-== 8< END output=====
-005	PASS
-006	FAIL
-== 8< BEGIN diff output ==
---- test-output-006.txt	2019-03-29 11:07:22.000000000 +0100
-+++ stef-output-file.data	2019-03-29 11:36:13.000000000 +0100
+--- 8< END output ---
+  005	PASS
+  006	FAIL
+--- 8< BEGIN diff output ---
+--- test-output-006.txt	2019-03-29 13:30:30.000000000 +0100
++++ stef-output-file.data	2020-03-21 16:33:53.000000000 +0100
 @@ -1,2 +1 @@
 -This is an example of a test which returned 0 but its output
 -does not match the expected printed output.
 +hello
-== 8< END diff output=====
+--- 8< END diff output ---
+  007	PASS
+---[ Tests finished ] ---
 
-============
+--- [ Unconfiguration Start ] ---
+Forcing unconfiguration (STEF_UNCONFIGURE_ALWAYS).
+Removing tmp directory dir.YoVVd.
+Temp directory 'dir.YoVVd' succesufully removed.
+Removing config.var.
+--- [ Unconfiguration End ] ---
 
-WARNING: some tests FAILED !!!
-WARNING: some tests UNTESTED !!!
+=== [ STEF Example Use Case Results ] ===
+WARNING: 2 test(s) FAILED !!!
+WARNING: 1 test(s) UNTESTED !!!
 ```
 
 ## Developing STEF
