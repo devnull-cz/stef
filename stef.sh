@@ -53,6 +53,15 @@ if [[ -n $STEF_CONFIG_LOCAL && -f $STEF_CONFIG_LOCAL ]]; then
 	source ./$STEF_CONFIG_LOCAL
 fi
 
+echo "Checking configuration sanity."
+if [[ -n $STEF_UNCONFIGURE ]]; then
+	if [[ -n $STEF_UNCONFIGURE_NEVER && -n $STEF_UNCONFIGURE_ALWAYS ]]; then
+		echo "STEF_UNCONFIGURE_(ALWAYS|NEVER) are mutually exclusive."
+		echo "Please fix it before trying to re-run.  Exiting."
+		exit 1
+	fi
+fi
+
 echo "Checking existence of executables provided by the following variables:" \
     "$STEF_EXECUTABLE_LOCAL_VARS"
 for var in $STEF_EXECUTABLE_LOCAL_VARS; do
