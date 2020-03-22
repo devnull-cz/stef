@@ -142,11 +142,13 @@ for i in $testnames; do
 
 	# Anything else aside from 0 is a test fail.
 	if ((ret != 0)); then
-		echo "FAIL"
+		echo "FAIL (return code $ret)"
 		((++fail))
-		echo "--- 8< BEGIN output ---"
-		cat $output
-		echo "--- 8< END output ---"
+		if [[ -s $output ]]; then
+			echo "--- 8< BEGIN output ---"
+			cat $output
+			echo "--- 8< END output ---"
+		fi
 		rm $output
 		continue
 	fi
