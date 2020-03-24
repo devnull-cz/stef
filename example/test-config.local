@@ -2,3 +2,4 @@
 # environment specific variables, like a path to a development binary that is
 # expected to be tested.
 export MYCMD="/usr/bin/true"
+export PASSWD="/etc/passwd"

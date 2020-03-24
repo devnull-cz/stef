@@ -64,7 +64,7 @@ if [[ -n $STEF_UNCONFIGURE ]]; then
 fi
 
 if [[ -n $STEF_EXECUTABLE_LOCAL_VARS ]]; then
-	echo "Checking existence of executables provided by the " \
+	echo "Checking existence of executables provided by the" \
 	    "following variables: $STEF_EXECUTABLE_LOCAL_VARS"
 	for var in $STEF_EXECUTABLE_LOCAL_VARS; do
 		varval=$(eval echo \$$var)
@@ -90,7 +90,7 @@ if [[ -n $STEF_EXECUTABLE_LOCAL_VARS ]]; then
 fi
 
 if [[ -n $STEF_REGFILE_LOCAL_VARS ]]; then
-	echo "Checking existence of regular files provided by the " \
+	echo "Checking existence of regular files provided by the" \
 	    "following variables: $STEF_REGFILE_LOCAL_VARS"
 	for var in $STEF_REGFILE_LOCAL_VARS; do
 		varval=$(eval echo \$$var)
