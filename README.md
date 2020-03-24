@@ -72,6 +72,7 @@ STEF\_UNCONFIGURE | if defined, this executable is run after executing the tests
 STEF\_UNCONFIGURE\_ALWAYS | if set to any non-empty value, the unconfiguration phase (if set via STEF\_UNCONFIGURE) is always run even if not all tests finish as *PASSED*.
 STEF\_UNCONFIGURE\_NEVER | if set to any non-empty value, the unconfiguration phase (if set via STEF\_UNCONFIGURE) is always skipped.
 STEF\_EXECUTABLE\_LOCAL\_VARS | if defined, STEF will make sure all space separated variable names point to an existing executables.  Use this variable if you need the user define those before running the test suite.  All such variables **must** be set as absolute paths.
+STEF\_REGFILE\_LOCAL\_VARS | if defined, STEF will make sure all space separated variable names point to an existing regular files.  Use this variable if you need the user define those before running the test suite.  All such variables **must** be set as absolute paths.
 STEF\_CONFIG\_LOCAL | a name of a file which, **if existent**, is sourced after `stef-config` is sourced.  Use this variable, for example, for setting up the test binary variable which is user specific, as $STEF\_CONFIG\_LOCAL file should never be commited.  Variables in this file should be always defined with the `export` builtin.
 
 ## Test Output Files

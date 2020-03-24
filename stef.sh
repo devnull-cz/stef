@@ -63,27 +63,57 @@ if [[ -n $STEF_UNCONFIGURE ]]; then
 	fi
 fi
 
-echo "Checking existence of executables provided by the following variables:" \
-    "$STEF_EXECUTABLE_LOCAL_VARS"
-for var in $STEF_EXECUTABLE_LOCAL_VARS; do
-	varval=$(eval echo \$$var)
-	[[ -x $varval && $varval == /* ]] && continue
+if [[ -n $STEF_EXECUTABLE_LOCAL_VARS ]]; then
+	echo "Checking existence of executables provided by the " \
+	    "following variables: $STEF_EXECUTABLE_LOCAL_VARS"
+	for var in $STEF_EXECUTABLE_LOCAL_VARS; do
+		varval=$(eval echo \$$var)
+		[[ -x $varval && $varval == /* ]] && continue
 
-	if [[ $varval != /* ]]; then
+		if [[ $varval != /* ]]; then
+			printf "\n%s%s\n%s\n" \
+			    "Variable '$var' set as '$varval' as part of " \
+			    "STEF_EXECUTABLE_LOCAL_VARS" \
+			    "defined in $STEF_CONFIG must be an absolute path."
+			printf "\nPlease fix it before trying to re-run.  "
+			printf "Exiting.\n"
+			exit 1
+		fi
+
 		printf "\n%s%s\n%s\n" \
 		    "Variable '$var' set as '$varval' as part of " \
-		    "STEF_EXECUTABLE_VARS" \
-		    "defined in '$STEF_CONFIG' must be an absolute path."
+		    "STEF_EXECUTABLE_LOCAL_VARS" \
+		    "defined in '$STEF_CONFIG' does not point to an executable."
 		printf "\nPlease fix it before trying to re-run.  Exiting.\n"
 		exit 1
-	fi
+	done
+fi
 
-	printf "\n%s\n%s\n" \
-	    "Variable '$var' set as '$varval' as part of STEF_EXECUTABLE_VARS" \
-	    "defined in '$STEF_CONFIG' does not point to an executable."
-	printf "\nPlease fix it before trying to re-run.  Exiting.\n"
-	exit 1
-done
+if [[ -n $STEF_REGFILE_LOCAL_VARS ]]; then
+	echo "Checking existence of regular files provided by the " \
+	    "following variables: $STEF_REGFILE_LOCAL_VARS"
+	for var in $STEF_REGFILE_LOCAL_VARS; do
+		varval=$(eval echo \$$var)
+		[[ -f $varval && $varval == /* ]] && continue
+
+		if [[ $varval != /* ]]; then
+			printf "\n%s%s\n%s\n" \
+			    "Variable '$var' set as '$varval' as part of " \
+			    "STEF_REGFILE_LOCAL_VARS" \
+			    "defined in $STEF_CONFIG must be an absolute path."
+			printf "\nPlease fix it before trying to re-run.  "
+			printf "Exiting.\n"
+			exit 1
+		fi
+
+		printf "\n%s%s\n%s\n" \
+		    "Variable '$var' set as '$varval' as part of " \
+		    "STEF_REGFILE_LOCAL_VARS" \
+		    "defined in $STEF_CONFIG does not point to a regular file."
+		printf "\nPlease fix it before trying to re-run.  Exiting.\n"
+		exit 1
+	done
+fi
 
 typeset varname
 for varname in STEF_CONFIGURE STEF_UNCONFIGURE; do
@@ -105,6 +135,7 @@ if [[ -n $STEF_CONFIGURE ]]; then
 		echo "Configuration failed, fix it and rerun.  Exiting."
 		exit 1
 	fi
+
 	printf -- "--- [ Configuration End ] ---\n"
 fi
 
