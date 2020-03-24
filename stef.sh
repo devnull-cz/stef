@@ -56,8 +56,9 @@ fi
 echo "Checking configuration sanity."
 if [[ -n $STEF_UNCONFIGURE ]]; then
 	if [[ -n $STEF_UNCONFIGURE_NEVER && -n $STEF_UNCONFIGURE_ALWAYS ]]; then
-		echo "STEF_UNCONFIGURE_(ALWAYS|NEVER) are mutually exclusive."
-		echo "Please fix it before trying to re-run.  Exiting."
+		printf "\n"
+		printf "STEF_UNCONFIGURE_(ALWAYS|NEVER) are mutually exclusive."
+		echo "\nPlease fix it before trying to re-run.  Exiting."
 		exit 1
 	fi
 fi
@@ -65,21 +66,22 @@ fi
 echo "Checking existence of executables provided by the following variables:" \
     "$STEF_EXECUTABLE_LOCAL_VARS"
 for var in $STEF_EXECUTABLE_LOCAL_VARS; do
-	varexec=$(eval echo \$$var)
-	[[ -x $varexec && $varexec == /* ]] && continue
+	varval=$(eval echo \$$var)
+	[[ -x $varval && $varval == /* ]] && continue
 
-	if [[ $varexec != /* ]]; then
-		printf "%s\n%s\n" \
-		    "Variable '$var' set as '$varexec' in STEF_EXECUTABLE_VARS" \
-		    "variable defined in '$STEF_CONFIG' must be an absolute path."
-		echo "Please fix it before trying to re-run.  Exiting."
+	if [[ $varval != /* ]]; then
+		printf "\n%s%s\n%s\n" \
+		    "Variable '$var' set as '$varval' as part of " \
+		    "STEF_EXECUTABLE_VARS" \
+		    "defined in '$STEF_CONFIG' must be an absolute path."
+		printf "\nPlease fix it before trying to re-run.  Exiting.\n"
 		exit 1
 	fi
 
-	printf "%s\n%s\n" \
-	    "Variable '$var' set as '$varexec' in STEF_EXECUTABLE_VARS" \
-	    "variable defined in '$STEF_CONFIG' does not point to an executable."
-	echo "Please fix it before trying to re-run.  Exiting."
+	printf "\n%s\n%s\n" \
+	    "Variable '$var' set as '$varval' as part of STEF_EXECUTABLE_VARS" \
+	    "defined in '$STEF_CONFIG' does not point to an executable."
+	printf "\nPlease fix it before trying to re-run.  Exiting.\n"
 	exit 1
 done
 
