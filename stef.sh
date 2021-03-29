@@ -157,7 +157,7 @@ else
 	testnames=$( echo "$testfiles" | cut -f2- -d- | cut -f1 -d. )
 fi
 
-printf -- "\n---[ Running tests ] ---\n"
+printf -- "\n--- [ Running tests ] ---\n"
 
 for i in $testnames; do
 	# Print the test number.
@@ -219,7 +219,7 @@ for i in $testnames; do
 	rm -f $output $diffout
 done
 
-printf -- "---[ Tests finished ] ---\n"
+printf -- "--- [ Tests finished ] ---\n"
 
 typeset -i stefret=0
 ((fail > 0)) && stefret=1
