@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # It is advisable for the configure/unconfigure scripts to indent its output.
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 echo "This is some output the test script printed."
 echo "It is printed here as the test failed."
