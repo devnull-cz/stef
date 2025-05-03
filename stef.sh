@@ -128,23 +128,12 @@ for varname in STEF_CONFIGURE STEF_UNCONFIGURE; do
 	fi
 done
 
-if [[ -n $STEF_CONFIGURE ]]; then
-	printf -- "\n--- [ Configuration Start ] ---\n"
-	$STEF_CONFIGURE
-	if (($? != 0)); then
-		echo "Configuration failed, fix it and rerun.  Exiting."
-		exit 1
-	fi
-
-	printf -- "--- [ Configuration End ] ---\n"
-fi
-
 # Test must match a pattern "test-*.sh".  All other scripts are ignored.
 # E.g. test-001.sh, test-002.sh, test-cmd-003, etc.
 if (( $# > 0 )); then
 	testnames=$*
 	# Make sure all test names represent valid test scripts.
-	for i in $names; do
+	for i in $testnames; do
 		[[ -x test-$i.sh ]] || \
 		    { echo "$i not a valid test.  Exiting." && exit 1; }
 	done
@@ -155,6 +144,17 @@ else
 		exit 1
 	fi
 	testnames=$( echo "$testfiles" | cut -f2- -d- | cut -f1 -d. )
+fi
+
+if [[ -n $STEF_CONFIGURE ]]; then
+	printf -- "\n--- [ Configuration Start ] ---\n"
+	$STEF_CONFIGURE
+	if (($? != 0)); then
+		echo "Configuration failed, fix it and rerun.  Exiting."
+		exit 1
+	fi
+
+	printf -- "--- [ Configuration End ] ---\n"
 fi
 
 printf -- "\n--- [ Running tests ] ---\n"
