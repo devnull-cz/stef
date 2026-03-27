@@ -11,33 +11,49 @@ typeset -i ret
 typeset diffout=stef-diff.out
 typeset testnames
 typeset testfiles
-typeset output=stef-output-file.data
+typeset outf=stef-output-file
+typeset output=${outf}.data
 typeset tests
 typeset LS=/bin/ls
+
+# If you want to use variables defined in this file in the tests, export them in
+# there, it will be sourced.
+#
+# For example, if you put "export configvar=config.var" to this file, you can
+# then put variable settings to this file from the test suite configure script,
+# e.g. a temp directory for data files created from the configure script and
+# being used in the test cases, and at the beginning of each test case, do
+# "source $configvar".
 typeset STEF_CONFIG=stef-config
 
-typeset -i STEF_UNSUPPORTED=100
-typeset -i STEF_UNTESTED=101
 # So that test scripts may use those.
-export STEF_UNSUPPORTED
-export STEF_UNTESTED
+typeset -ix STEF_UNSUPPORTED=100
+typeset -ix STEF_UNTESTED=101
+# Use this in scripts to print extra info that will be printed out on a script
+# failure.
+typeset -x dbgoutput=$(pwd)/${outf}.DEBUG.output
 
-#
-# If one needs any debug output to be printed from the test cases, those MUST go
-# to stderr as the stdout might be compared with the pre-defined output file.
-# E.g.:
-#
-#  echo "Created tarball '$tarball'" >&2
-#  ls -l $tarball >&2
-#
-# Only in case of an error, the output file is printed by STEF to the console.
-#
+function catout
+{
+	typeset file=$1
+	typeset extra=$2
+
+	[[ -n $extra ]] && extra+=' '
+
+	[[ -s $file ]] || return
+	echo "--- 8< BEGIN ${extra}output ---"
+	cat $file
+	echo "--- 8< END ${extra}output ---"
+}
+
 function catoutput
 {
-	[[ -s $output ]] || return
-	echo "--- 8< BEGIN output ---"
-	cat $output
-	echo "--- 8< END output ---"
+	catout $output
+}
+
+function catdbgoutput
+{
+	catout $dbgoutput DEBUG
 }
 
 # If the first argument is a directory, go in there.
@@ -48,8 +64,6 @@ if (( $# > 0 )); then
 	fi
 fi
 
-# If you want to use variables defined in here in the tests, export them in
-# there.
 [[ -f $STEF_CONFIG ]] && source ./$STEF_CONFIG
 
 [[ -z $STEF_TESTSUITE_NAME ]] && STEF_TESTSUITE_NAME="STEF Test Run"
@@ -173,6 +187,7 @@ for i in $testnames; do
 	# Print the test number.
 	printf "  $i\t"
 
+	rm -f $dbgoutput
 	./test-$i.sh >$output 2>&1
 	ret=$?
 
@@ -196,12 +211,9 @@ for i in $testnames; do
 	if ((ret != 0)); then
 		echo "FAIL (return code $ret)"
 		((++fail))
-		if [[ -s $output ]]; then
-			echo "--- 8< BEGIN output ---"
-			cat $output
-			echo "--- 8< END output ---"
-		fi
-		rm $output
+		catoutput
+		catdbgoutput
+		rm -f $output $dbgoutput
 		continue
 	fi
 
@@ -219,14 +231,13 @@ for i in $testnames; do
 	if (($? != 0)); then
 		echo "FAIL"
 		((++fail))
-		echo "--- 8< BEGIN diff output ---"
-		cat $diffout
-		echo "--- 8< END diff output ---"
+		catout $diffout DIFF
+		catdbgoutput
 	else
 		echo "PASS"
 	fi
 
-	rm -f $output $diffout
+	rm -f $output $dbgoutput $diffout
 done
 
 printf -- "--- [ Tests finished ] ---\n"
