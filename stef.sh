@@ -22,6 +22,16 @@ typeset -i STEF_UNTESTED=101
 export STEF_UNSUPPORTED
 export STEF_UNTESTED
 
+#
+# If one needs any debug output to be printed from the test cases, those MUST go
+# to stderr as the stdout might be compared with the pre-defined output file.
+# E.g.:
+#
+#  echo "Created tarball '$tarball'" >&2
+#  ls -l $tarball >&2
+#
+# Only in case of an error, the output file is printed by STEF to the console.
+#
 function catoutput
 {
 	[[ -s $output ]] || return
